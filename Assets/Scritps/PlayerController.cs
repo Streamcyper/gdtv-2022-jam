@@ -15,14 +15,14 @@ public class PlayerController : MonoBehaviour
 
     public bool isActive = true;
 
-    private Vector2 _moveDirection;
-    private Vector2 _rawInput;
-    private bool _isJumping;
     private Rigidbody2D _rigidbody;
     private PlayerInput _playerInput;
-    private float _jump;
+    private Vector2 _rawInput;
     private LayerMask _ground;
-    
+    private float _jump;
+    private float _holdTime;
+    private bool _isJumping;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -36,8 +36,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isActive)
         {
-            _rawInput = _playerInput.Movement.Move.ReadValue<Vector2>();
-            _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, _rigidbody.velocity.y);
+            Move();
 
             if (_isJumping)
             {
@@ -46,15 +45,18 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
+
+    private void Move()
+    {
+        _rawInput = _playerInput.Movement.Move.ReadValue<Vector2>();
+        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, Mathf.Clamp(_rigidbody.velocity.y, -jumpForce * 2, jumpForce * 2));
+    }
+
     public void OnJump(InputAction.CallbackContext context)
     {
-        
-        var _holdTime = (float)context.duration;
-        Mathf.Clamp01(_holdTime);
+        _holdTime = Mathf.Clamp((float)context.duration, 0, 1);
 
         _jump = jumpForce * (1 + _holdTime);
-
         if (CanJump())
             _isJumping = true;
     }
