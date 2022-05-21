@@ -16,21 +16,12 @@
                 },
                 {
                     "name": "Jump",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "5ebe93c0-852d-4dcd-9cb7-6b8b382f0ece",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold(duration=0.5,pressPoint=0.1)",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "ChargeJump",
-                    "type": "Button",
-                    "id": "2985a0ff-2273-4518-afec-9ac935fd5471",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -121,39 +112,6 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "b01041f0-ee1f-4e79-bb51-61f1908958d1",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ChargeJump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "74315a5f-924b-467b-9774-d22a5f820d04",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ChargeJump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d1f52ab0-97b2-4e9c-84bf-e9bd3d71b4c5",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ChargeJump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         }

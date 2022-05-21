@@ -7,54 +7,66 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    private const string PLATFORM_LAYER = "ground";
+    
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private Collider2D feet;
 
     public bool isActive = true;
 
-    private Vector2 _moveDirection;
-    private Vector2 _rawInput;
-    private bool _isJumping;
     private Rigidbody2D _rigidbody;
-
-
-    private const string PLATFORM_LAYER = "ground";
+    private PlayerInput _playerInput;
+    private Vector2 _rawInput;
+    private LayerMask _ground;
+    private float _jump;
+    private float _holdTime;
+    private bool _isJumping;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _ground = LayerMask.GetMask(PLATFORM_LAYER);
+       _playerInput = new PlayerInput();
+       _playerInput.Movement.Enable();
+       _playerInput.Movement.Jump.canceled += OnJump;
     }
 
     private void FixedUpdate()
     {
-        //Move the player
-        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, _rigidbody.velocity.y);
-
-        //Make the player jump
-        if (_isJumping)
+        if (isActive)
         {
-            _rigidbody.velocity += new Vector2(0f, jumpForce);
-            _isJumping = false;
+            Move();
+
+            if (_isJumping)
+            {
+                _rigidbody.velocity += new Vector2(0f, _jump);
+                _isJumping = false;
+            }
         }
     }
 
-    //Used by the input system 
-    private void OnMove(InputValue value)
+    private void Move()
     {
-        if (!isActive) return;
-
-        _rawInput = value.Get<Vector2>();
+        _rawInput = _playerInput.Movement.Move.ReadValue<Vector2>();
+        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, Mathf.Clamp(_rigidbody.velocity.y, -jumpForce * 2, jumpForce * 2));
     }
 
-    //Used by the input system
-    private void OnJump(InputValue value)
+    public void OnJump(InputAction.CallbackContext context)
     {
-        if (!isActive) return;
+        _holdTime = Mathf.Clamp((float)context.duration, 0, 1);
 
-        if (!feet.IsTouchingLayers(LayerMask.GetMask(PLATFORM_LAYER))) return;
-
-        _isJumping = true;
+        _jump = jumpForce * (1 + _holdTime);
+        if (CanJump())
+            _isJumping = true;
     }
-    
+
+    private bool CanJump()
+    {
+        if (IsGrounded())
+            return true;
+        return false;
+    }
+
+    private bool IsGrounded() => feet.IsTouchingLayers(_ground);
 }
