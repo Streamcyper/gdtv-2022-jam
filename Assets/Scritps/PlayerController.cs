@@ -1,50 +1,60 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D _rigidbody2D;
-    private LayerMask ground;
-    [SerializeField] private float speed = 1;
-    [SerializeField] private float maxSpeed = 1;
-    [SerializeField] private float jumpForce = 1;
-    [SerializeField] private float jumpSpeed = 1;
-    [SerializeField] private float fallSpeed = 1;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private Collider2D feet;
 
-    void Start()
+    public bool isActive = true;
+
+    private Vector2 _moveDirection;
+    private Vector2 _rawInput;
+    private bool _isJumping;
+    private Rigidbody2D _rigidbody;
+
+
+    private const string PLATFORM_LAYER = "ground";
+
+    private void Awake()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-        ground = LayerMask.GetMask("ground");
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        Move();
-        if (Input.GetAxisRaw("Vertical") != 0 && CanJump())
-            Jump();
+        //Move the player
+        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, _rigidbody.velocity.y);
+
+        //Make the player jump
+        if (_isJumping)
+        {
+            _rigidbody.velocity += new Vector2(0f, jumpForce);
+            _isJumping = false;
+        }
     }
 
-    private bool IsGrounded() => _rigidbody2D.IsTouchingLayers(ground);
-
-    private bool CanJump() => IsGrounded();
-
-    private void Jump()
+    //Used by the input system 
+    private void OnMove(InputValue value)
     {
-        var _jump = new Vector2(0, jumpForce);
-        _rigidbody2D.AddForce(_jump, ForceMode2D.Impulse);
-        Mathf.Clamp(_rigidbody2D.velocity.y, fallSpeed, jumpSpeed);
+        if (!isActive) return;
+
+        _rawInput = value.Get<Vector2>();
     }
 
-    private void Move()
+    //Used by the input system
+    private void OnJump(InputValue value)
     {
-        float _direction = Input.GetAxisRaw("Horizontal");
-        float _amount = (_direction * speed) * Time.deltaTime;
-        var _velocity = _rigidbody2D.velocity;
-        _velocity += new Vector2(_amount, 0);
-        _rigidbody2D.velocity = _velocity;
-        Mathf.Clamp(_velocity.x, -maxSpeed, maxSpeed);
+        if (!isActive) return;
+
+        if (!feet.IsTouchingLayers(LayerMask.GetMask(PLATFORM_LAYER))) return;
+
+        _isJumping = true;
     }
+    
 }
