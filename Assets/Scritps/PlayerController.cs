@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -54,11 +51,14 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        _holdTime = Mathf.Clamp((float)context.duration, 0, 1);
+        if (isActive)
+        {
+            _holdTime = Mathf.Clamp((float)context.duration, 0, 1);
 
-        _jump = jumpForce * (1 + _holdTime);
-        if (CanJump())
-            _isJumping = true;
+            _jump = jumpForce * (1 + _holdTime);
+            if (CanJump())
+                _isJumping = true;
+        }
     }
 
     private bool CanJump()
