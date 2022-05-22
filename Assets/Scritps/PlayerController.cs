@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D _rigidbody;
     private PlayerInput _playerInput;
+    private Soul _soul;
     private Vector2 _rawInput;
     private LayerMask _ground;
     private float _jump;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _ground = LayerMask.GetMask(PLATFORM_LAYER);
+        _soul = GetComponent<Soul>();
        _playerInput = new PlayerInput();
        _playerInput.Movement.Enable();
        _playerInput.Movement.Jump.canceled += OnJump;
@@ -37,6 +39,11 @@ public class PlayerController : MonoBehaviour
 
             if (_isJumping)
             {
+                if (!IsGrounded())
+                {
+                    _soul.UseKarma(1);
+                    _jump = jumpForce * 2;
+                }
                 _rigidbody.velocity += new Vector2(0f, _jump);
                 _isJumping = false;
             }
@@ -57,15 +64,20 @@ public class PlayerController : MonoBehaviour
 
             _jump = jumpForce * (1 + _holdTime);
             if (CanJump())
+            {
                 _isJumping = true;
+            }
         }
     }
 
     private bool CanJump()
     {
-        if (IsGrounded())
-            return true;
-        return false;
+        return IsGrounded() || HasKarma();
+    }
+
+    private bool HasKarma()
+    {
+        return _soul.KarmaAmount > 0;
     }
 
     private bool IsGrounded() => feet.IsTouchingLayers(_ground);
