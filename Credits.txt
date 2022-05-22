@@ -1,2 +1,3 @@
-Gamedev.tv for their Gamedev.tv Game Jam Starter Kit v2
-
+Gamedev.tv for their Gamedev.tv Game Jam Starter Kit v2 (https://offer.gamedev.tv/jam-starter-kit/)
+CodeMonkey for tutorial on Unity's new Input System (https://www.youtube.com/watch?v=Yjee_e4fICc)
+Kenney Vleugels (www.kenney.nl) for Game Icons (https://opengameart.org/content/game-icons)
