@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,10 +9,16 @@ public class UiManager: MonoBehaviour
 {
     [SerializeField] private List<GameObject> menus;
     [SerializeField] private List<GameObject> mainMenuButtons;
+    [SerializeField] private TextMeshProUGUI karmaScore;
 
     private PlayerInput _uiInput;
     private PlayerController _player;
     private int _activeMenu;
+
+    private void Start()
+    {
+        menus[0].SetActive(true);
+    }
 
     private void OnEnable()
     {
@@ -19,11 +26,6 @@ public class UiManager: MonoBehaviour
         _uiInput.UI.Enable();
         _uiInput.UI.Pause.performed += OnPause;
         _player = FindObjectOfType<PlayerController>();
-    }
-
-    private void Start()
-    {
-        menus[0].SetActive(true);
     }
 
     public void StartGame()
@@ -47,16 +49,19 @@ public class UiManager: MonoBehaviour
         _activeMenu = targetMenu;
     }
 
-
     public void ExitButton()
     {
         Application.Quit(0);
     }
-
-
+    
     public void OnPause(InputAction.CallbackContext context)
     {
         _player.isActive = false;
         menus[0].SetActive(true);
-    } 
+    }
+
+    public void UpdateKarma(int karmaAmount)
+    {
+        karmaScore.SetText($"Karma: {karmaAmount}");
+    }
 }
