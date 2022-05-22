@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UiManager: MonoBehaviour
+public class UiManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> menus;
     [SerializeField] private List<GameObject> mainMenuButtons;
@@ -53,7 +53,7 @@ public class UiManager: MonoBehaviour
     {
         Application.Quit(0);
     }
-    
+
     public void OnPause(InputAction.CallbackContext context)
     {
         _player.isActive = false;

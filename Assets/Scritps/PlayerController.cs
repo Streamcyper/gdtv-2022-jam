@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private const string PLATFORM_LAYER = "ground";
-    
+
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private Collider2D feet;
@@ -26,9 +26,9 @@ public class PlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _ground = LayerMask.GetMask(PLATFORM_LAYER);
         _soul = GetComponent<Soul>();
-       _playerInput = new PlayerInput();
-       _playerInput.Movement.Enable();
-       _playerInput.Movement.Jump.canceled += OnJump;
+        _playerInput = new PlayerInput();
+        _playerInput.Movement.Enable();
+        _playerInput.Movement.Jump.canceled += OnJump;
     }
 
     private void FixedUpdate()
@@ -39,21 +39,25 @@ public class PlayerController : MonoBehaviour
 
             if (_isJumping)
             {
-                if (!IsGrounded())
-                {
-                    _soul.UseKarma(1);
-                    _jump = jumpForce * 2;
-                }
+                if (!IsGrounded()) KarmaJump();
+
                 _rigidbody.velocity += new Vector2(0f, _jump);
                 _isJumping = false;
             }
         }
     }
 
+    private void KarmaJump()
+    {
+        _soul.UseKarma(1);
+        _jump = jumpForce * 2;
+    }
+
     private void Move()
     {
         _rawInput = _playerInput.Movement.Move.ReadValue<Vector2>();
-        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed, Mathf.Clamp(_rigidbody.velocity.y, -jumpForce * 2, jumpForce * 2));
+        _rigidbody.velocity = new Vector2(_rawInput.x * moveSpeed,
+            Mathf.Clamp(_rigidbody.velocity.y, -jumpForce * 2, jumpForce * 2));
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -63,10 +67,7 @@ public class PlayerController : MonoBehaviour
             _holdTime = Mathf.Clamp((float)context.duration, 0, 1);
 
             _jump = jumpForce * (1 + _holdTime);
-            if (CanJump())
-            {
-                _isJumping = true;
-            }
+            if (CanJump()) _isJumping = true;
         }
     }
 
@@ -75,10 +76,10 @@ public class PlayerController : MonoBehaviour
         return IsGrounded() || HasKarma();
     }
 
-    private bool HasKarma()
-    {
-        return _soul.KarmaAmount > 0;
-    }
+    private bool HasKarma() => _soul.KarmaAmount > 0;
 
-    private bool IsGrounded() => feet.IsTouchingLayers(_ground);
+    private bool IsGrounded()
+    {
+        return feet.IsTouchingLayers(_ground);
+    }
 }

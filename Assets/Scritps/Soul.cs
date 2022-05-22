@@ -6,7 +6,7 @@ using UnityEngine;
 public class Soul : MonoBehaviour
 {
     [SerializeField] private UiManager uiManager;
-    
+
     public int KarmaAmount { get; private set; } = 0;
 
     public void PickUpKarma()

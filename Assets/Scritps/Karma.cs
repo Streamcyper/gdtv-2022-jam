@@ -10,7 +10,7 @@ public class Karma : MonoBehaviour
         if (col.gameObject.CompareTag("Player"))
         {
             col.gameObject.GetComponent<Soul>().PickUpKarma();
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 }

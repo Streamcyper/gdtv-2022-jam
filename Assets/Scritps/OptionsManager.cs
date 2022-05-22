@@ -21,7 +21,9 @@ public class OptionsManager : MonoBehaviour
         {
             image.sprite = icons[0];
             _states.MusicIsActive = false;
-        } else {
+        }
+        else
+        {
             image.sprite = icons[1];
             _states.MusicIsActive = true;
         }
@@ -33,8 +35,9 @@ public class OptionsManager : MonoBehaviour
         {
             image.sprite = icons[0];
             _states.SfxIsActive = false;
-
-        } else {
+        }
+        else
+        {
             image.sprite = icons[1];
             _states.SfxIsActive = true;
         }
